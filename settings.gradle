@@ -1,0 +1,19 @@
+rootProject.name = 'ArquitecturaHexagonal'
+
+include ':model'
+include ':usescases'
+include ':postgreSQL-repository'
+include ':web'
+include ':app-service'
+include ':mongo-repository'
+include ':din'
+include ':helpers'
+
+findProject(':model').projectDir=file('./domain/model')
+findProject(':usescases').projectDir=file('./domain/usescases')
+findProject(':postgreSQL-repository').projectDir=file('./infrastructure/driven-adapters/postgreSQL-repository')
+findProject(':web').projectDir=file('./infrastructure/entry-points/web')
+findProject(':app-service').projectDir=file('./applications/app-service')
+findProject(':mongo-repository').projectDir=file("./infrastructure/driven-adapters/mongo-repository")
+findProject(':din').projectDir=file("./infrastructure/entry-points/din")
+findProject(':helpers').projectDir=file("./infrastructure/entry-points/helpers")

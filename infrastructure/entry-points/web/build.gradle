@@ -1,0 +1,10 @@
+dependencies {
+    implementation project(':model')
+    implementation project(':usescases')
+    implementation project(':helpers')
+    implementation project(':din')
+    implementation project(':mongo-repository')
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}
