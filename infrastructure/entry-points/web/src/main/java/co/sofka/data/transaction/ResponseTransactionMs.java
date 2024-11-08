@@ -1,8 +1,9 @@
 package co.sofka.data.transaction;
 
-import co.sofka.DinError;
-import co.sofka.DinHeader;
-import co.sofka.ResponseMs;
+
+import din.DinError;
+import din.DinHeader;
+import din.ResponseMs;
 
 public class ResponseTransactionMs extends ResponseMs<TransactionDto> {
 

@@ -1,10 +1,13 @@
 dependencies {
     implementation project(':model')
     implementation project(':usescases')
-    implementation project(':helpers')
     implementation project(':din')
-    implementation project(':mongo-repository')
+    implementation project(':cryptography')
 
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    compileOnly 'org.projectlombok:lombok:1.18.28'
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+
 }

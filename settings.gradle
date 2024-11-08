@@ -6,8 +6,9 @@ include ':postgreSQL-repository'
 include ':web'
 include ':app-service'
 include ':mongo-repository'
+include ':web-security'
 include ':din'
-include ':helpers'
+include ':cryptography'
 
 findProject(':model').projectDir=file('./domain/model')
 findProject(':usescases').projectDir=file('./domain/usescases')
@@ -15,5 +16,6 @@ findProject(':postgreSQL-repository').projectDir=file('./infrastructure/driven-a
 findProject(':web').projectDir=file('./infrastructure/entry-points/web')
 findProject(':app-service').projectDir=file('./applications/app-service')
 findProject(':mongo-repository').projectDir=file("./infrastructure/driven-adapters/mongo-repository")
-findProject(':din').projectDir=file("./infrastructure/entry-points/din")
-findProject(':helpers').projectDir=file("./infrastructure/entry-points/helpers")
+findProject(':web-security').projectDir=file("./infrastructure/helpers/web-security");
+findProject(':din').projectDir=file("./infrastructure/helpers/din")
+findProject(':cryptography').projectDir=file('./infrastructure/helpers/cryptography')

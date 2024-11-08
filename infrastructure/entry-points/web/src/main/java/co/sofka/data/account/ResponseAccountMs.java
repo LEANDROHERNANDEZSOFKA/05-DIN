@@ -1,10 +1,9 @@
 package co.sofka.data.account;
 
-import co.sofka.Account;
-import co.sofka.DinError;
-import co.sofka.DinHeader;
-import co.sofka.ResponseMs;
-import co.sofka.data.customer.CustomerDto;
+
+import din.DinError;
+import din.DinHeader;
+import din.ResponseMs;
 
 public class ResponseAccountMs extends ResponseMs<AccountDto> {
 

@@ -38,7 +38,6 @@ public class MongoAccountAdapter implements AccountRepository {
 
         customerDocument.get().setAccount(accountDocument);
 
-        mongoTemplate.save(accountDocument);
         mongoTemplate.save(customerDocument.get());
     }
 

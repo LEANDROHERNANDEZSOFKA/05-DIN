@@ -2,7 +2,6 @@ package co.sofka.handler;
 
 import co.sofka.Customer;
 import co.sofka.data.customer.CustomerDto;
-import co.sofka.exception.GetNotFoundException;
 import co.sofka.exceptions.InvalidNameCustomerException;
 import co.sofka.usecase.customer.CreateCustomerUseCase;
 import co.sofka.usecase.customer.DeleteCustomerUseCase;
@@ -25,11 +24,11 @@ public class CustomerHandler {
     }
 
     public void createCustomer(CustomerDto customerDto) {
-        try{
+        try {
             Customer customer = new Customer();
             customer.setName(customerDto.getName());
             createCustomerUseCase.apply(customer);
-        }catch (InvalidNameCustomerException e){
+        } catch (InvalidNameCustomerException e) {
             throw new InvalidNameCustomerException(e.getMessage());
         }
     }
@@ -41,17 +40,15 @@ public class CustomerHandler {
     }
 
     public CustomerDto getCustomerById(CustomerDto getCustomerByIdDTO) {
-        try{
-            Optional<Customer>customer=Optional.ofNullable(getCustomerByIdUseCase.apply(new Customer(getCustomerByIdDTO.getId())));
 
-            return new CustomerDto(
-                    customer.get().getId(),
-                    customer.get().getName(),
-                    customer.get().getCreatedAt()
-            );
-        }catch (GetNotFoundException e){
-            throw new GetNotFoundException("Customer does not exist");
-        }
+        Optional<Customer> customer = Optional.ofNullable(getCustomerByIdUseCase.apply(new Customer(getCustomerByIdDTO.getId())));
+
+        return new CustomerDto(
+                customer.get().getId(),
+                customer.get().getName(),
+                customer.get().getCreatedAt()
+        );
+
     }
 
 }

@@ -1,8 +1,9 @@
 package co.sofka.data.customer;
 
-import co.sofka.DinHeader;
-import co.sofka.DinError;
-import co.sofka.ResponseMs;
+
+import din.DinError;
+import din.DinHeader;
+import din.ResponseMs;
 
 public class ResponseCustomerMs extends ResponseMs<CustomerDto> {
 

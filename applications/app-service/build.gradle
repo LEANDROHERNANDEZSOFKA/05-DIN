@@ -3,6 +3,7 @@ dependencies {
     //implementation project(':postgreSQL-repository')
     implementation project(':mongo-repository')
     implementation project(':usescases')
+    implementation project(':web-security')
 
     implementation('org.springframework.boot:spring-boot-starter')
     implementation('org.springframework.boot:spring-boot-starter-web')
