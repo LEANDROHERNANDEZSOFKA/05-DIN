@@ -1,7 +1,7 @@
 package cryptography;
 
-import co.sofka.gateway.encryption.CipherPort;
-import co.sofka.gateway.encryption.KeyPort;
+import co.sofka.encryption.CipherPort;
+import co.sofka.encryption.KeyPort;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;

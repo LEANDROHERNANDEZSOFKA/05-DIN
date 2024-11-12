@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/transaction")
 public class TransactionRestController {
@@ -35,7 +37,9 @@ public class TransactionRestController {
     @PostMapping("/get")
     public ResponseEntity<ResponseTransactionMs> getTransaction(@RequestBody RequestMs<TransactionDto> dto) {
         try {
-            return ResponseEntity.ok(new ResponseTransactionMs(dto.getDinHeader(), transactionHandler.getTransactionById(dto.getDinBody()), new DinError(DinErrorEnum.TRANSACTION_CREATE)));
+            System.out.println("DTO ID: "+dto.getDinBody().getId());
+            List<TransactionDto> transactionDtos = transactionHandler.getTransactionsByUserId(dto.getDinBody());
+            return ResponseEntity.ok(new ResponseTransactionMs(dto.getDinHeader(),transactionDtos, new DinError(DinErrorEnum.TRANSACTION_CREATE)));
         } catch (Exception e) {
             return ResponseEntity.ok(new ResponseTransactionMs(dto.getDinHeader(), dto.getDinBody(), new DinError(DinErrorEnum.TRANSACTION_ERROR)));
         }

@@ -1,10 +1,14 @@
 package co.sofka.adapters;
 
 import co.sofka.Customer;
+import co.sofka.config.JwtService;
 import co.sofka.data.CustomerDocument;
+import co.sofka.data.UserDocument;
 import co.sofka.exception.GetNotFoundException;
-import co.sofka.gateway.*;
+import co.sofka.out.CustomerRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -14,18 +18,30 @@ import java.util.Optional;
 public class MongoCustomerAdapter implements CustomerRepository {
 
     private final MongoTemplate mongoTemplate;
+    private final JwtService jwtService;
 
-    public MongoCustomerAdapter(MongoTemplate mongoTemplate) {
+    public MongoCustomerAdapter(MongoTemplate mongoTemplate, JwtService jwtService) {
         this.mongoTemplate = mongoTemplate;
+        this.jwtService = jwtService;
     }
 
     @Override
-    public void createCustomer(Customer customer) {
+    public void createCustomer(Customer customer,String token) {
         CustomerDocument customerDocument = new CustomerDocument();
         customerDocument.setName(customer.getName());
         customerDocument.setDeleted(false);
         customerDocument.setCreatedAt(LocalDate.now());
-        mongoTemplate.save(customerDocument);
+
+        String email=jwtService.extractUsername(token);
+
+        Query query = new Query(Criteria.where("email").is(email));
+
+        UserDocument user = mongoTemplate.findOne(query, UserDocument.class);
+
+        assert user != null;
+        user.setCustomer(customerDocument);
+
+        mongoTemplate.save(user);
     }
 
     @Override

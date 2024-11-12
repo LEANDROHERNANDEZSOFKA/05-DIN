@@ -3,9 +3,12 @@ package co.sofka.adapters;
 import co.sofka.Account;
 import co.sofka.data.AccountDocument;
 import co.sofka.data.CustomerDocument;
+import co.sofka.data.UserDocument;
 import co.sofka.exception.GetNotFoundException;
-import co.sofka.gateway.AccountRepository;
+import co.sofka.out.AccountRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -16,29 +19,31 @@ public class MongoAccountAdapter implements AccountRepository {
 
     private final MongoTemplate mongoTemplate;
 
+
     public MongoAccountAdapter(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 
     @Override
     public void createAccount(Account account) {
-        Optional<CustomerDocument>customerDocument = Optional.ofNullable(mongoTemplate.findById(account.getCustomerId(),CustomerDocument.class));
+        Optional<UserDocument> userDocument = Optional.ofNullable(mongoTemplate.findById(account.getCustomerId(), UserDocument.class));
 
-        if(customerDocument.isEmpty()) {
+        if (userDocument.isEmpty()) {
             throw new GetNotFoundException("Customer not found");
         }
+
 
         AccountDocument accountDocument = new AccountDocument();
         accountDocument.setNumber(account.getNumber());
         accountDocument.setAmount(account.getAmount());
         accountDocument.setCreatedAt(LocalDate.now());
         accountDocument.setDeleted(false);
-        accountDocument.setCustomerId(customerDocument.get().getId());
+        accountDocument.setCustomerId(userDocument.get().getCustomer().getId());
 
 
-        customerDocument.get().setAccount(accountDocument);
+        userDocument.get().getCustomer().setAccount(accountDocument);
 
-        mongoTemplate.save(customerDocument.get());
+        mongoTemplate.save(userDocument.get());
     }
 
 
@@ -53,25 +58,28 @@ public class MongoAccountAdapter implements AccountRepository {
 
     @Override
     public Account getAccount(Account account) {
+        System.out.println("Numero: "+account.getNumber());
 
-        Optional<AccountDocument>accountDocument=Optional.ofNullable(mongoTemplate.findById(account.getId(),AccountDocument.class));
+        Query query = new Query(Criteria.where("customer.account_customer.number").is(321345));
+        UserDocument user = mongoTemplate.findOne(query, UserDocument.class);
 
-        if(accountDocument.isEmpty()) {
-            throw new GetNotFoundException("Account does not exist");
+        System.out.println("Documento encontrado por número: " + user);
+
+        if (user != null) {
+            return new Account(user.getCustomer().getAccount().getId()
+                    , user.getCustomer().getAccount().getNumber(),
+                    user.getCustomer().getAccount().getAmount(),
+                    user.getCustomer().getAccount().getCustomerId(),
+                    user.getCustomer().getAccount().getCreatedAt());
         }
-
-        return new Account(accountDocument.get().getId(),
-                accountDocument.get().getNumber(),
-                accountDocument.get().getAmount(),
-                account.getId(),
-                accountDocument.get().getCreatedAt());
+        return null;
     }
 
     @Override
     public void updateAccount(Account account) {
-        Optional<AccountDocument>accountDocument=Optional.ofNullable(mongoTemplate.findById(account.getId(),AccountDocument.class));
+        Optional<AccountDocument> accountDocument = Optional.ofNullable(mongoTemplate.findById(account.getId(), AccountDocument.class));
 
-        if(accountDocument.isEmpty()) {
+        if (accountDocument.isEmpty()) {
             throw new GetNotFoundException("Account does not exist");
         }
 

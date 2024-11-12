@@ -1,5 +1,7 @@
 package din;
 
+import java.util.List;
+
 public class ResponseMs<T> {
 
     private DinHeader dinHeader;
@@ -9,14 +11,17 @@ public class ResponseMs<T> {
     public ResponseMs() {
     }
 
+
     public ResponseMs(DinHeader dinHeader, T dinBody, DinError dinError) {
         this.dinHeader = dinHeader;
         this.dinBody = dinBody;
         this.dinError = dinError;
     }
 
-    public ResponseMs(DinHeader dinHeader, DinError dinError) {
+
+    public ResponseMs(DinHeader dinHeader, List<T> dinBody, DinError dinError) {
         this.dinHeader = dinHeader;
+        this.dinBody = (T) dinBody;
         this.dinError = dinError;
     }
 

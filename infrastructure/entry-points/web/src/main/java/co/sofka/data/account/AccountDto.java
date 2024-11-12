@@ -18,15 +18,15 @@ public class AccountDto {
         this.createdAt = createdAt;
     }
 
+    public AccountDto() {
+    }
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public AccountDto() {
     }
 
     public String getNumber() {

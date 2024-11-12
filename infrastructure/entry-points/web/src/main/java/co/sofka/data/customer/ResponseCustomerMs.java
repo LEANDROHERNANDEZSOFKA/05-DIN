@@ -19,7 +19,7 @@ public class ResponseCustomerMs extends ResponseMs<CustomerDto> {
 
 
     public ResponseCustomerMs(DinError dinError) {
-        super(new DinHeader(), null, dinError != null ? dinError : defaultDinError());
+        super(new DinHeader(), (CustomerDto) null, dinError != null ? dinError : defaultDinError());
     }
 
     public ResponseCustomerMs(CustomerDto customerDto, DinError dinError) {

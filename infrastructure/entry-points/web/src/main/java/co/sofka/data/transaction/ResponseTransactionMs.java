@@ -5,6 +5,8 @@ import din.DinError;
 import din.DinHeader;
 import din.ResponseMs;
 
+import java.util.List;
+
 public class ResponseTransactionMs extends ResponseMs<TransactionDto> {
 
     public ResponseTransactionMs(TransactionDto customerDto) {
@@ -17,11 +19,15 @@ public class ResponseTransactionMs extends ResponseMs<TransactionDto> {
 
 
     public ResponseTransactionMs(DinError dinError) {
-        super(new DinHeader(), null, dinError != null ? dinError : defaultDinError());
+        super(new DinHeader(), (TransactionDto) null, dinError != null ? dinError : defaultDinError());
     }
 
     public ResponseTransactionMs(TransactionDto transactionDto, DinError dinError) {
         super(new DinHeader(), transactionDto, dinError != null ? dinError : defaultDinError());
+    }
+
+    public ResponseTransactionMs(DinHeader dinHeader, List<TransactionDto> transactionDtos, DinError dinError) {
+        super(dinHeader != null ? dinHeader : new DinHeader(), transactionDtos, dinError != null ? dinError : defaultDinError());
     }
 
     public ResponseTransactionMs(DinHeader dinHeader, TransactionDto transactionDto, DinError dinError) {

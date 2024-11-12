@@ -1,6 +1,7 @@
 dependencies {
     implementation project(':model')
     implementation project(':usescases')
+    implementation project(':ports')
     implementation project(':din')
     implementation project(':cryptography')
 
@@ -10,4 +11,9 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.28'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
 
+}
+
+tasks.named('bootJar') {
+    enabled = true
+    mainClass = 'co.sofka.MainApplication'
 }

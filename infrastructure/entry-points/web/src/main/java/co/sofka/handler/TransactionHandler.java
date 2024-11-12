@@ -2,17 +2,20 @@ package co.sofka.handler;
 
 import co.sofka.Transaction;
 import co.sofka.data.transaction.TransactionDto;
-import co.sofka.usecase.transaction.CreateTransactionUseCase;
-import co.sofka.usecase.transaction.GetTransactionByIdUseCase;
+import co.sofka.usecase.transaction.CreateTransactionUseCaseImpl;
+import co.sofka.usecase.transaction.GetTransactionByIdUseCaseImpl;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class TransactionHandler {
 
-    private final CreateTransactionUseCase transactionUseCase;
-    private final GetTransactionByIdUseCase transactionByIdUseCase;
+    private final CreateTransactionUseCaseImpl transactionUseCase;
+    private final GetTransactionByIdUseCaseImpl transactionByIdUseCase;
 
-    public TransactionHandler(CreateTransactionUseCase transactionUseCase, GetTransactionByIdUseCase transactionByIdUseCase) {
+    public TransactionHandler(CreateTransactionUseCaseImpl transactionUseCase, GetTransactionByIdUseCaseImpl transactionByIdUseCase) {
         this.transactionUseCase = transactionUseCase;
         this.transactionByIdUseCase = transactionByIdUseCase;
     }
@@ -26,17 +29,22 @@ public class TransactionHandler {
     }
 
 
-    public TransactionDto getTransactionById(TransactionDto getTransactionDTO){
-        Transaction transaction= transactionByIdUseCase.apply(new Transaction(getTransactionDTO.getId()));
-        return new TransactionDto(
-                transaction.getId(),
-                transaction.getAccountId(),
-                transaction.getAmount(),
-                transaction.getAmountCost(),
-                transaction.getType(),
-                transaction.getTimeStamp()
-        );
+    public List<TransactionDto> getTransactionsByUserId(TransactionDto getTransactionDTO) {
+
+        List<Transaction> transactions = transactionByIdUseCase.apply(new Transaction(getTransactionDTO.getId()));
+
+        return transactions.stream()
+                .map(transaction -> new TransactionDto(
+                        transaction.getId(),
+                        transaction.getAccountId(),
+                        transaction.getAmount(),
+                        transaction.getAmountCost(),
+                        transaction.getType(),
+                        transaction.getTimeStamp()
+                ))
+                .collect(Collectors.toList());
     }
+
 }
 
 

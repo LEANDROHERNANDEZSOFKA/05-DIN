@@ -17,7 +17,7 @@ public class ResponseAccountMs extends ResponseMs<AccountDto> {
     }
 
     public ResponseAccountMs(DinError dinError) {
-        super(new DinHeader(), null, dinError != null ? dinError : defaultDinError());
+        super(new DinHeader(), (AccountDto) null, dinError != null ? dinError : defaultDinError());
     }
 
     public ResponseAccountMs(AccountDto accountDto, DinError dinError) {

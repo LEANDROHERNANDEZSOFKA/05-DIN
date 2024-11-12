@@ -21,11 +21,12 @@ public class Account {
         this.createdAt = createdAt;
     }
 
+
     public Account() {
     }
 
-    public Account(String id) {
-        this.id = id;
+    public Account(int number) {
+        this.number = number;
     }
 
     public String getId() {

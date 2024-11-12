@@ -58,4 +58,15 @@ public class CustomerDocument {
     public void setAccount(AccountDocument account) {
         this.account = account;
     }
+
+    @Override
+    public String toString() {
+        return "CustomerDocument{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", createdAt=" + createdAt +
+                ", isDeleted=" + isDeleted +
+                ", account=" + account +
+                '}';
+    }
 }

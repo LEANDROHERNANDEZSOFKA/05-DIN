@@ -9,12 +9,15 @@ import co.sofka.data.AccountTransactionEntity;
 import co.sofka.data.TransactionEntity;
 import co.sofka.exception.InvalidAmountException;
 import co.sofka.exception.TransactionNotFoundException;
-import co.sofka.gateway.TransactionRepository;
+import co.sofka.out.TransactionRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class PostgreSQLTransactionAdapter implements TransactionRepository {
@@ -56,15 +59,26 @@ public class PostgreSQLTransactionAdapter implements TransactionRepository {
     }
 
     @Override
-    public Transaction getTransaction(Transaction transaction) {
-            Optional<TransactionEntity> transactionEntityOpt = repository.findById(Integer.parseInt(transaction.getId()));
+    public List<Transaction> getTransaction(Transaction transaction) {
 
-            if(transactionEntityOpt.isEmpty()){
-                throw new TransactionNotFoundException("The transaction does not exist");
-            }else{
-                TransactionEntity transactionEntity = transactionEntityOpt.get();
-                return new Transaction(String.valueOf(transactionEntity.getId()),transactionEntity.getAmount(),transactionEntity.getAmountCost(),transactionEntity.getType(),transactionEntity.getTimestamp());
-            }
+        List<TransactionEntity> transactionEntities = List.of(repository.findById(Integer.parseInt(transaction.getId())).get());
+
+        if (transactionEntities.isEmpty()) {
+            throw new TransactionNotFoundException("No transactions found for the given account");
+        }
+
+        List<Transaction> transactions = transactionEntities.stream()
+                .map(transactionEntity -> new Transaction(
+                        String.valueOf(transactionEntity.getId()),
+                        transactionEntity.getAmount(),
+                        transactionEntity.getAmountCost(),
+                        transactionEntity.getType(),
+                        transactionEntity.getTimestamp()
+                ))
+                .collect(Collectors.toList());
+
+        return transactions;
     }
+
 
 }
