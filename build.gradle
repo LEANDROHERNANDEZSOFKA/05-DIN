@@ -18,16 +18,16 @@ repositories {
     mavenCentral()
 }
 
-
-tasks.named('bootJar') {
-    enabled = true
-    mainClass = 'co.sofka.MainApplication'
-    archiveBaseName.set('bank_application_v1')
-}
-
-
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
 }
 
 
@@ -47,4 +47,13 @@ subprojects {
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
+
+    bootJar {
+        enabled = false
+    }
+
+    jar {
+        enabled = true
+    }
 }
+
