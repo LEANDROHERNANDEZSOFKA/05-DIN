@@ -19,7 +19,7 @@ public class UpdateAccountUseCaseImpl implements UpdateAccountUseCase {
     @Override
     public void updateAccount(Account account, Transaction transaction) {
         Account account1= AccountUpdateContext.accountUpdate(transaction).update(transaction,account);
-        accountRepository.updateAccount(account);
+        accountRepository.updateAccount(account1);
     }
 
 }

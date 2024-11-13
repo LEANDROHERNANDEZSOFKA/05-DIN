@@ -85,4 +85,17 @@ public class Transaction {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id='" + id + '\'' +
+                ", amount=" + amount +
+                ", amountCost=" + amountCost +
+                ", type=" + type +
+                ", timeStamp=" + timeStamp +
+                ", accountId='" + accountId + '\'' +
+                ", role=" + role +
+                '}';
+    }
 }

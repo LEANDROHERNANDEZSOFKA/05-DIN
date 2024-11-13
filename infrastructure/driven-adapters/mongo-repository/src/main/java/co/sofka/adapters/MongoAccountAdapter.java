@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -59,11 +60,9 @@ public class MongoAccountAdapter implements AccountRepository {
 
     @Override
     public Account getAccount(Account account) {
-        System.out.println("ENTRO A GET ACCOUNT CON EL ID: "+account.getId());
         ObjectId objectId = new ObjectId(account.getId());
         UserDocument user = mongoTemplate.findById(objectId, UserDocument.class);
         //Query query = new Query(Criteria.where("customer.account_customer.number").is(account.getCustomerId()));
-        System.out.println("Obtengo el USER: "+user);
         //UserDocument user = mongoTemplate.findOne(query, UserDocument.class);
 
         if (account.getId() == null || account.getId().isEmpty()) {
@@ -82,11 +81,13 @@ public class MongoAccountAdapter implements AccountRepository {
     public void updateAccount(Account account) {
         Optional<UserDocument> accountDocument = Optional.ofNullable(mongoTemplate.findById(account.getId(), UserDocument.class));
 
-        if (accountDocument.isEmpty()) {
-            throw new GetNotFoundException("Account does not exist");
-        }
+        System.out.println("Documento: "+accountDocument.get());
 
-        accountDocument.get().getCustomer().getAccount().setAmount(account.getAmount());
+        BigDecimal amount = account.getAmount();
+
+        accountDocument.get().getCustomer().getAccount().setAmount(amount);
+
+        System.out.println("Bigdecimal: "+amount);
 
         mongoTemplate.save(accountDocument.get());
     }

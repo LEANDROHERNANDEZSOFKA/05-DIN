@@ -18,7 +18,7 @@ public class TransactionHandler {
     private final CreateTransactionUseCaseImpl transactionUseCase;
     private final GetTransactionByIdUseCaseImpl transactionByIdUseCase;
     private final UpdateAccountUseCaseImpl updateAccountUseCase;
-    private final GetAccountByIdUseCaseImpl getAccountByIdUseCase;
+    private final GetAccountByIdUseCaseImpl getAccountByIdUseCase;;
 
     public TransactionHandler(CreateTransactionUseCaseImpl transactionUseCase, GetTransactionByIdUseCaseImpl transactionByIdUseCase, UpdateAccountUseCaseImpl updateAccountUseCase, GetAccountByIdUseCaseImpl getAccountByIdUseCase) {
         this.transactionUseCase = transactionUseCase;
@@ -28,18 +28,17 @@ public class TransactionHandler {
     }
 
     public void createTransaction(TransactionDto transactionDTO) {
-        //Transaction transaction = new Transaction();
-        //transaction.setAmount(transactionDTO.getAmount());
-        //transaction.setType(transactionDTO.getType());
-        //transaction.setAccountId(transactionDTO.getAccountId());
+        Transaction transaction = new Transaction();
+        transaction.setAmount(transactionDTO.getAmount());
+        transaction.setType(transactionDTO.getType());
+        transaction.setAccountId(transactionDTO.getAccountId());
         Account account=new Account();
         account.setId(transactionDTO.getAccountId());
-        System.out.println("ID TRANSACCION: "+account.getId());
-        System.out.println("Cuenta"+account);
         Account account2=getAccountByIdUseCase.apply(account);
-        System.out.println("Obtengo la cuenta: "+account2);
-        //transaction=transactionUseCase.apply(transaction);
-        //updateAccountUseCase.updateAccount(account,transaction);
+        transaction=transactionUseCase.apply(transaction);
+        System.out.println("TRANSACCION: "+transaction);
+        account2.setId(transactionDTO.getAccountId());
+        updateAccountUseCase.updateAccount(account2,transaction);
     }
 
 
