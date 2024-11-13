@@ -1,4 +1,4 @@
-package co.sofka.usecase.strategy;
+package co.sofka.usecase.transaction.strategy;
 
 import co.sofka.Transaction;
 

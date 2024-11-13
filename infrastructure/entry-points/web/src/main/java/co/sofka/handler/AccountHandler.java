@@ -7,7 +7,6 @@ import co.sofka.exceptions.InvalidFundsException;
 import co.sofka.usecase.account.CreateAccountUseCaseImpl;
 import co.sofka.usecase.account.DeleteAccountUseCaseImpl;
 import co.sofka.usecase.account.GetAccountByIdUseCaseImpl;
-import co.sofka.usecase.account.UpdateAccountUseCaseImpl;
 import cryptography.AESUtilAdapter;
 import org.springframework.stereotype.Component;
 
@@ -18,14 +17,12 @@ public class AccountHandler {
 
     private final CreateAccountUseCaseImpl createAccountUseCaseImpl;
     private final GetAccountByIdUseCaseImpl getAccountByIdUseCaseImpl;
-    private final UpdateAccountUseCaseImpl updateAccountUseCaseImpl;
     private final DeleteAccountUseCaseImpl deleteAccountUseCaseImpl;
 
 
-    public AccountHandler(CreateAccountUseCaseImpl createAccountUseCaseImpl, GetAccountByIdUseCaseImpl getAccountByIdUseCaseImpl, UpdateAccountUseCaseImpl updateAccountUseCaseImpl, DeleteAccountUseCaseImpl deleteAccountUseCaseImpl) {
+    public AccountHandler(CreateAccountUseCaseImpl createAccountUseCaseImpl, GetAccountByIdUseCaseImpl getAccountByIdUseCaseImpl, DeleteAccountUseCaseImpl deleteAccountUseCaseImpl) {
         this.createAccountUseCaseImpl = createAccountUseCaseImpl;
         this.getAccountByIdUseCaseImpl = getAccountByIdUseCaseImpl;
-        this.updateAccountUseCaseImpl = updateAccountUseCaseImpl;
         this.deleteAccountUseCaseImpl = deleteAccountUseCaseImpl;
     }
 
@@ -69,12 +66,4 @@ public class AccountHandler {
         }
     }
 
-    public void updateAccount(AccountDto accountDTO) {
-        Account account = new Account();
-        account.setNumber(Integer.parseInt(accountDTO.getNumber()));
-        account.setAmount(accountDTO.getAmount());
-        account.setCustomerId(accountDTO.getCustomerId());
-        account.setCreatedAt(accountDTO.getCreatedAt());
-        updateAccountUseCaseImpl.apply(account);
-    }
 }

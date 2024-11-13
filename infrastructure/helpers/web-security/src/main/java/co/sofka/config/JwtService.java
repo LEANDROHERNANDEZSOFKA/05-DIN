@@ -21,41 +21,36 @@ public class JwtService {
     @Value("${jwt.key}")
     private String SECRET_KEY;
 
-    private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+    private Key getSingIngKey(){
+        byte[] keyBytes= Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(userDetails, new HashMap<>());
+    public String generateToken(UserDetails userDetails){
+        return generateToken(userDetails,new HashMap<>());
     }
 
-    public String generateToken(UserDetails userDetails, Map<String, Object> extraClaims) {
+    public String generateToken(UserDetails userDetails, Map<String,Object> extraClaims){
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .signWith(getSingIngKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public Claims extractAllClaims(String token) {
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (io.jsonwebtoken.ExpiredJwtException e) {
-            // Regenerate token if expired
-            return null;
-        }
+    public Claims extractAllClaims(String token){
+        return Jwts.parserBuilder()
+                .setSigningKey(getSingIngKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claims != null ? claimsResolver.apply(claims) : null;
+    public <T>T extractClaim(String token, Function<Claims,T> claimsResolver){
+        final Claims claims=extractAllClaims(token);
+        return claimsResolver.apply(claims);
     }
 
     public String refreshToken(String token, UserDetails userDetails) {
@@ -65,22 +60,20 @@ public class JwtService {
         return token;
     }
 
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+    public String extractUsername(String token){
+        return extractClaim(token,Claims::getSubject);
     }
 
-    public Date extractExpiration(String token) {
-        Claims claims = extractAllClaims(token);
-        return claims != null ? claims.getExpiration() : new Date();
+    public Date extractExpiration(String token){
+        return extractClaim(token,Claims::getExpiration);
     }
 
-    public Boolean isTokenExpired(String token) {
-        Date expiration = extractExpiration(token);
-        return expiration != null && expiration.before(new Date());
+    public Boolean isTokenExpired(String token){
+        return extractExpiration(token).before(new Date());
     }
 
-    public Boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username != null && username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    public Boolean isTokenValid(String token,UserDetails userDetails){
+        final String username=extractUsername(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 }

@@ -72,8 +72,6 @@ public class MongoUserAdapter implements AuthRepository {
             throw new UsernameNotFoundException("User not found with email: " + authenticationRequest.getEmail());
         }
 
-        String renewedToken = jwtService.refreshToken(authenticationRequest.getToken(), user);
-
         if (!passwordEncoder.matches(authenticationRequest.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("Invalid credentials provided");
         }

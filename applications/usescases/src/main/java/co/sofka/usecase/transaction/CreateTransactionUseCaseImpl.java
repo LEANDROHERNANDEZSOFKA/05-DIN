@@ -4,7 +4,7 @@ import co.sofka.Transaction;
 import co.sofka.exceptions.InvalidCreationException;
 import co.sofka.in.transaction.CreateTransactionUseCase;
 import co.sofka.out.TransactionRepository;
-import co.sofka.usecase.strategy.AccountMovementContext;
+import co.sofka.usecase.transaction.strategy.AccountMovementContext;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,7 +17,7 @@ public class CreateTransactionUseCaseImpl implements CreateTransactionUseCase {
         this.transactionRepository = transactionRepository;
     }
 
-    public void apply(Transaction transaction) {
+    public Transaction apply(Transaction transaction) {
 
         if(transaction == null){
             throw new InvalidCreationException("Transaction cannot be null");
@@ -25,6 +25,8 @@ public class CreateTransactionUseCaseImpl implements CreateTransactionUseCase {
 
         Transaction transaction1=AccountMovementContext.accountMovement(transaction).movement(transaction);
         transactionRepository.createTransaction(transaction1);
+
+        return transaction1;
     }
 
 }

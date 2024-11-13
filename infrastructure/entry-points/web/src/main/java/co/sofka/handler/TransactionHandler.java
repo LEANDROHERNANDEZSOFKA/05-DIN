@@ -1,5 +1,6 @@
 package co.sofka.handler;
 
+import co.sofka.Account;
 import co.sofka.Transaction;
 import co.sofka.data.transaction.TransactionDto;
 import co.sofka.usecase.account.GetAccountByIdUseCaseImpl;
@@ -27,12 +28,18 @@ public class TransactionHandler {
     }
 
     public void createTransaction(TransactionDto transactionDTO) {
-        Transaction transaction = new Transaction();
-        transaction.setAmount(transactionDTO.getAmount());
-        transaction.setType(transactionDTO.getType());
-        transaction.setAccountId(transactionDTO.getAccountId());
-
-        transactionUseCase.apply(transaction);
+        //Transaction transaction = new Transaction();
+        //transaction.setAmount(transactionDTO.getAmount());
+        //transaction.setType(transactionDTO.getType());
+        //transaction.setAccountId(transactionDTO.getAccountId());
+        Account account=new Account();
+        account.setId(transactionDTO.getAccountId());
+        System.out.println("ID TRANSACCION: "+account.getId());
+        System.out.println("Cuenta"+account);
+        Account account2=getAccountByIdUseCase.apply(account);
+        System.out.println("Obtengo la cuenta: "+account2);
+        //transaction=transactionUseCase.apply(transaction);
+        //updateAccountUseCase.updateAccount(account,transaction);
     }
 
 

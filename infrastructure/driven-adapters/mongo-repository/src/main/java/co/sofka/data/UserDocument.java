@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Document(collection = "bank_db")
 public class UserDocument implements UserDetails {
@@ -23,6 +24,7 @@ public class UserDocument implements UserDetails {
 
 
     public UserDocument() {
+        this.id= UUID.randomUUID().toString();
     }
 
 
@@ -171,5 +173,18 @@ public class UserDocument implements UserDetails {
         public UserDocument build() {
             return new UserDocument(id, firstName, lastName, email, password, role, customer);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "UserDocument{" +
+                "id='" + id + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", customer=" + customer +
+                '}';
     }
 }

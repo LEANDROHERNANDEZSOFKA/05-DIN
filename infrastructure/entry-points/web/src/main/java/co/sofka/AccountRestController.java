@@ -61,14 +61,4 @@ public class AccountRestController {
         }
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<ResponseAccountMs> updateAccountAmount(@RequestBody RequestMs<AccountDto> dto){
-        try{
-            accountHandler.updateAccount(dto.getDinBody());
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseAccountMs(dto.getDinHeader(), dto.getDinBody(),new DinError(DinErrorEnum.ACCOUNT_CREATED)));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseAccountMs(dto.getDinHeader(), dto.getDinBody(),new DinError(DinErrorEnum.ACCOUNT_UPDATED_ERROR)));
-        }
-    }
-
 }

@@ -6,9 +6,11 @@ import co.sofka.data.CustomerDocument;
 import co.sofka.data.UserDocument;
 import co.sofka.exception.GetNotFoundException;
 import co.sofka.out.AccountRepository;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -31,7 +33,6 @@ public class MongoAccountAdapter implements AccountRepository {
         if (userDocument.isEmpty()) {
             throw new GetNotFoundException("Customer not found");
         }
-
 
         AccountDocument accountDocument = new AccountDocument();
         accountDocument.setNumber(account.getNumber());
@@ -58,32 +59,34 @@ public class MongoAccountAdapter implements AccountRepository {
 
     @Override
     public Account getAccount(Account account) {
-        System.out.println("Numero: "+account.getNumber());
+        System.out.println("ENTRO A GET ACCOUNT CON EL ID: "+account.getId());
+        ObjectId objectId = new ObjectId(account.getId());
+        UserDocument user = mongoTemplate.findById(objectId, UserDocument.class);
+        //Query query = new Query(Criteria.where("customer.account_customer.number").is(account.getCustomerId()));
+        System.out.println("Obtengo el USER: "+user);
+        //UserDocument user = mongoTemplate.findOne(query, UserDocument.class);
 
-        Query query = new Query(Criteria.where("customer.account_customer.number").is(321345));
-        UserDocument user = mongoTemplate.findOne(query, UserDocument.class);
-
-        System.out.println("Documento encontrado por número: " + user);
-
-        if (user != null) {
-            return new Account(user.getCustomer().getAccount().getId()
-                    , user.getCustomer().getAccount().getNumber(),
-                    user.getCustomer().getAccount().getAmount(),
-                    user.getCustomer().getAccount().getCustomerId(),
-                    user.getCustomer().getAccount().getCreatedAt());
+        if (account.getId() == null || account.getId().isEmpty()) {
+            System.out.println("ID de cuenta no válido");
+            return null;
         }
-        return null;
+
+        return new Account(user.getCustomer().getAccount().getId()
+                , user.getCustomer().getAccount().getNumber(),
+                user.getCustomer().getAccount().getAmount(),
+                user.getCustomer().getAccount().getCustomerId(),
+                user.getCustomer().getAccount().getCreatedAt());
     }
 
     @Override
     public void updateAccount(Account account) {
-        Optional<AccountDocument> accountDocument = Optional.ofNullable(mongoTemplate.findById(account.getId(), AccountDocument.class));
+        Optional<UserDocument> accountDocument = Optional.ofNullable(mongoTemplate.findById(account.getId(), UserDocument.class));
 
         if (accountDocument.isEmpty()) {
             throw new GetNotFoundException("Account does not exist");
         }
 
-        accountDocument.get().setAmount(account.getAmount());
+        accountDocument.get().getCustomer().getAccount().setAmount(account.getAmount());
 
         mongoTemplate.save(accountDocument.get());
     }

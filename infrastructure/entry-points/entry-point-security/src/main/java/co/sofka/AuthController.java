@@ -27,15 +27,7 @@ public class AuthController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<ResponseMs<AuthenticationResponse>> authenticate(
-            @RequestBody RequestMs<AuthenticationRequest> request,
-            @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
-
-        String token = null;
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
-        }
-
-        request.getDinBody().setToken(token);
+            @RequestBody RequestMs<AuthenticationRequest> request) {
 
         AuthenticationResponse authResponse = authHandler.authenticate(request.getDinBody());
 

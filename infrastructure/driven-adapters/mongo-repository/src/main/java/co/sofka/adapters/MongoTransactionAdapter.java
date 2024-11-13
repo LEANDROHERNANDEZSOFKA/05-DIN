@@ -40,8 +40,6 @@ public class MongoTransactionAdapter implements TransactionRepository {
 
         userDocument.get().getCustomer().getAccount().getTransactions().add(transactionDocument);
 
-
-
         mongoTemplate.save(userDocument.get());
     }
 
@@ -80,7 +78,6 @@ public class MongoTransactionAdapter implements TransactionRepository {
                     );
                 })
                 .collect(Collectors.toList());
-
         
         for (Transaction t : transactionList) {
             System.out.println(t);
