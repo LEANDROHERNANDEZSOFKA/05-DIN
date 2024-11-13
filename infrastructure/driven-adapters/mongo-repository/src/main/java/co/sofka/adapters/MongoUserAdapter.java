@@ -4,6 +4,7 @@ import co.sofka.AuthenticationRequest;
 import co.sofka.AuthenticationResponse;
 import co.sofka.RegisterRequest;
 import co.sofka.config.JwtService;
+import co.sofka.data.CustomerDocument;
 import co.sofka.data.Roles;
 import co.sofka.data.UserDocument;
 import co.sofka.out.AuthRepository;
@@ -31,20 +32,34 @@ public class MongoUserAdapter implements AuthRepository {
 
     @Override
     public AuthenticationResponse register(RegisterRequest registerRequest) {
-        UserDocument user = new UserDocument.Builder()
-                .setFirstName(registerRequest.getFirstname())
-                .setLastName(registerRequest.getLastname())
-                .setEmail(registerRequest.getEmail())
-                .setPassword(passwordEncoder.encode(registerRequest.getPassword()))
-                .setRole(Roles.USER)
-                .build();
 
-        mongoTemplate.save(user);
+        Query query = new Query(Criteria.where("email").is(registerRequest.getEmail()));
+        UserDocument user = mongoTemplate.findOne(query, UserDocument.class);
 
-        String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+        if (user == null) {
+            user = new UserDocument.Builder()
+                    .setFirstName(registerRequest.getFirstname())
+                    .setLastName(registerRequest.getLastname())
+                    .setEmail(registerRequest.getEmail())
+                    .setPassword(passwordEncoder.encode(registerRequest.getPassword()))
+                    .setRole(Roles.USER)
+                    .build();
+
+            CustomerDocument customerDocument = new CustomerDocument();
+
+            customerDocument.setName(registerRequest.getFirstname() + " " + registerRequest.getLastname());
+
+            user.setCustomer(customerDocument);
+
+            mongoTemplate.save(user);
+
+            String jwtToken = jwtService.generateToken(user);
+            return AuthenticationResponse.builder()
+                    .token(jwtToken)
+                    .build();
+        }else{
+            throw new UsernameNotFoundException("Username already exists, please authenticate");
+        }
     }
 
 
@@ -57,14 +72,35 @@ public class MongoUserAdapter implements AuthRepository {
             throw new UsernameNotFoundException("User not found with email: " + authenticationRequest.getEmail());
         }
 
+        String renewedToken = jwtService.refreshToken(authenticationRequest.getToken(), user);
+
         if (!passwordEncoder.matches(authenticationRequest.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("Invalid credentials provided");
         }
+
 
         String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
+    }
+
+
+
+    @Override
+    public RegisterRequest getUserByEmailUseCase(AuthenticationRequest authenticationRequest) {
+        Query query = new Query(Criteria.where("email").is(authenticationRequest.getEmail()));
+        UserDocument user = mongoTemplate.findOne(query, UserDocument.class);
+
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with email: " + authenticationRequest.getEmail());
+        }
+
+        return RegisterRequest.builder()
+                .id(user.getId())
+                .firstname(user.getFirstName())
+                .lastname(user.getLastName())
+                .email(user.getEmail()).build();
     }
 
 }

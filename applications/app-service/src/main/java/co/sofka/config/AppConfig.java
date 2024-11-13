@@ -1,6 +1,7 @@
 package co.sofka.config;
 
 import co.sofka.AuthenticateUseCaseImpl;
+import co.sofka.GetUserByEmailUseCaseImpl;
 import co.sofka.RegisterUseCaseImpl;
 import co.sofka.out.AuthRepository;
 import org.springframework.context.annotation.Bean;
@@ -51,5 +52,10 @@ public class AppConfig {
     @Bean
     public RegisterUseCaseImpl register(AuthRepository authRepository) {
         return new RegisterUseCaseImpl(authRepository);
+    }
+
+    @Bean
+    public GetUserByEmailUseCaseImpl getUserByEmailUseCase(AuthRepository authRepository){
+        return new GetUserByEmailUseCaseImpl(authRepository);
     }
 }

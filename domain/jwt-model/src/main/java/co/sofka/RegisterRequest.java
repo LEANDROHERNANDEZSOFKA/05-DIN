@@ -2,11 +2,19 @@ package co.sofka;
 
 public class RegisterRequest {
 
+    private String id;
     private String firstname;
     private String lastname;
     private String email;
     private String password;
 
+    private RegisterRequest(String id, String firstname, String lastname, String email, String password) {
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.password = password;
+    }
 
     private RegisterRequest(String firstname, String lastname, String email, String password) {
         this.firstname = firstname;
@@ -52,6 +60,13 @@ public class RegisterRequest {
         this.password = password;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public static Builder builder() {
         return new Builder();
@@ -59,11 +74,16 @@ public class RegisterRequest {
 
 
     public static class Builder {
+        private String id;
         private String firstname;
         private String lastname;
         private String email;
         private String password;
 
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
 
         public Builder firstname(String firstname) {
             this.firstname = firstname;
@@ -85,9 +105,9 @@ public class RegisterRequest {
             return this;
         }
 
-
         public RegisterRequest build() {
-            return new RegisterRequest(firstname, lastname, email, password);
+            return new RegisterRequest(id, firstname, lastname, email, password);
         }
     }
+
 }

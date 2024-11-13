@@ -1,6 +1,7 @@
 package co.sofka;
 
 
+import co.sofka.data.UserEmailDto;
 import co.sofka.handler.AuthHandler;
 import din.DinError;
 import din.DinErrorEnum;
@@ -25,13 +26,26 @@ public class AuthController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<ResponseMs<AuthenticationResponse>> authenticate(@RequestBody RequestMs<AuthenticationRequest> request) {
-        return ResponseEntity.ok(new ResponseMs<>(request.getDinHeader(), authHandler.authenticate(request.getDinBody()), new DinError(DinErrorEnum.SUCCESS)));
+    public ResponseEntity<ResponseMs<AuthenticationResponse>> authenticate(
+            @RequestBody RequestMs<AuthenticationRequest> request,
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+
+        String token = null;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            token = authorizationHeader.substring(7);
+        }
+
+        request.getDinBody().setToken(token);
+
+        AuthenticationResponse authResponse = authHandler.authenticate(request.getDinBody());
+
+        return ResponseEntity.ok(new ResponseMs<>(request.getDinHeader(), authResponse, new DinError(DinErrorEnum.SUCCESS)));
     }
 
-    @GetMapping("/hola")
-    public void hola(){
-        System.out.println("hola");
+
+    @PostMapping("/getUser")
+    public ResponseEntity<ResponseMs<RegisterRequest>> getUser(@RequestBody RequestMs<UserEmailDto> dto) {
+        return ResponseEntity.ok(new ResponseMs<>(dto.getDinHeader(),authHandler.getUserByEmail(dto.getDinBody()), new DinError(DinErrorEnum.SUCCESS)));
     }
 
 }

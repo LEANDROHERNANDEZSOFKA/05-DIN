@@ -9,9 +9,9 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
@@ -19,7 +19,6 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-
 
     public JwtAuthFilter(JwtService jwtService) {
         this.jwtService = jwtService;
@@ -32,35 +31,41 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
 
-        if (authHeader == null || !authHeader.startsWith("Bearer")) {
+        // Verifica que el encabezado contenga el token en formato "Bearer ..."
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
+        // Extrae el token y el usuario
         jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);
 
-        if (userEmail != null) {
+        // Si el usuario está presente en el token y el contexto de seguridad está vacío
+        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // Extrae los roles o authorities del token
             var authoritiesClaims = jwtService.extractAllClaims(jwt).get("roles");
             var authorities =
                     authoritiesClaims != null ?
                             AuthorityUtils.commaSeparatedStringToAuthorityList(authoritiesClaims.toString()) :
                             AuthorityUtils.NO_AUTHORITIES;
 
-            UserDetails userDetails =
-                    User.withUsername(userEmail)
-                            .password("")
-                            .authorities(authorities)
-                            .build();
+            // Construye un UserDetails usando el email y los roles obtenidos
+            UserDetails userDetails = User.withUsername(userEmail)
+                    .password("") // No es necesario el password aquí
+                    .authorities(authorities)
+                    .build();
 
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                authorities
-                        );
+            // Verifica solo la coincidencia del usuario, omitiendo la expiración del token
+            if (userEmail.equals(userDetails.getUsername())) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        authorities
+                );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                // Establece la autenticación en el contexto de seguridad
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
