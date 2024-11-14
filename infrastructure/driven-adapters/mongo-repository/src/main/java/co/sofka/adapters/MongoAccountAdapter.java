@@ -2,15 +2,11 @@ package co.sofka.adapters;
 
 import co.sofka.Account;
 import co.sofka.data.AccountDocument;
-import co.sofka.data.CustomerDocument;
 import co.sofka.data.UserDocument;
 import co.sofka.exception.GetNotFoundException;
-import co.sofka.out.AccountRepository;
+import co.sofka.AccountRepository;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
